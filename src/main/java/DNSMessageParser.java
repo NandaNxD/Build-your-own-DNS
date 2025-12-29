@@ -1,4 +1,8 @@
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static java.lang.System.out;
 
 public class DNSMessageParser {
     public DNSMessageParser(){
@@ -6,22 +10,24 @@ public class DNSMessageParser {
     }
 
     static DNSMessage getDNSMessage(byte[] packetData){
-        DNSMessage dnsMessage = null;
 
         /**
          * Read DNS Message section
          */
         
         DNSMessageHeader dnsMessageHeader =getDNSHeader(packetData);
+        DNSMessageQuestion dnsMessageQuestion=getDNSMessageQuestion(packetData);
 
 
-        return new DNSMessage(dnsMessageHeader,null,null,null);
+        return new DNSMessage(dnsMessageHeader,dnsMessageQuestion,null,null);
     }
 
     static private DNSMessageHeader getDNSHeader(byte[] packetData){
         /**
          * Header size is 12 bytes
          */
+
+        int offset=0;
 
         byte[] dnsOriginalMessageHeader=new byte[2*6];
 
@@ -60,5 +66,53 @@ public class DNSMessageParser {
 
 
         return new DNSMessageHeader(dnsOriginalMessageHeader,packetid,flags,questionCount,answerCount,authorityCount,additionalCount);
+    }
+
+    private static DNSMessageQuestion getDNSMessageQuestion(byte[] packet){
+        int offset=12;
+
+        boolean reachedEndOfName=false;
+
+        StringBuilder domainName=new StringBuilder();
+
+        ArrayList<Byte> name=new ArrayList<>();
+
+        while(!reachedEndOfName){
+            byte contentLength=packet[offset++];
+            name.add(contentLength);
+
+            if(contentLength==0){
+                domainName.deleteCharAt(domainName.length()-1);
+                reachedEndOfName=true;
+                continue;
+            }
+
+            while(contentLength-->0){
+                domainName.append((char)packet[offset]);
+                name.add(packet[offset++]);
+            }
+            domainName.append('.');
+        }
+
+        byte[] qType=new byte[2];
+
+        System.arraycopy(packet,offset,qType,0,2);
+        offset+=2;
+
+        byte[] qClass=new byte[2];
+        System.arraycopy(packet,offset,qClass,0,2);
+
+        offset+=2;
+
+
+        return new DNSMessageQuestion(Arrays.copyOfRange(packet,12,offset),convertByteArrayListToByteArray(name),qType,qClass,domainName.toString());
+    }
+
+    static byte[] convertByteArrayListToByteArray(ArrayList<Byte> list) {
+        byte[] out = new byte[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            out[i] = list.get(i);
+        }
+        return out;
     }
 }

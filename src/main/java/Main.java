@@ -23,7 +23,11 @@ public class Main {
             */
          bufResponse[2]= -128;
 
-         System.out.println(Arrays.toString(bufResponse));
+         System.arraycopy(dnsMessage.getDnsMessageQuestion().getDnsOriginalMessageQuestionInBytes(), 0, bufResponse, 12, dnsMessage.getDnsMessageQuestion().getDnsOriginalMessageQuestionInBytes().length);
+           /**
+            * Set QD Count to 1
+            */
+         bufResponse[5]=1;
 
          final DatagramPacket packetResponse = new DatagramPacket(bufResponse, bufResponse.length, packet.getSocketAddress());
          serverSocket.send(packetResponse);
