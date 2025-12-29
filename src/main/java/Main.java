@@ -12,7 +12,12 @@ public class Main {
          serverSocket.receive(packet);
          System.out.println("Received data");
 
+         DNSMessage dnsMessage =DNSMessageParser.getDNSMessage(buf);
+
          final byte[] bufResponse = new byte[512];
+
+         System.arraycopy(dnsMessage.getDnsMessageHeader().getDnsOriginalMessageHeaderInBytes(), 0, bufResponse, 0, 12);
+
          final DatagramPacket packetResponse = new DatagramPacket(bufResponse, bufResponse.length, packet.getSocketAddress());
          serverSocket.send(packetResponse);
        }
