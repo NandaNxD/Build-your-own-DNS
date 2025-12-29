@@ -18,7 +18,7 @@ public class Main {
          final byte[] bufResponse = new byte[512];
 
          System.arraycopy(dnsMessage.getDnsMessageHeader().getDnsOriginalMessageHeaderInBytes(), 0, bufResponse, 0, 2);
-         bufResponse[3]=1;
+         bufResponse[2]=1;
 
          final DatagramPacket packetResponse = new DatagramPacket(bufResponse, bufResponse.length, packet.getSocketAddress());
          serverSocket.send(packetResponse);
