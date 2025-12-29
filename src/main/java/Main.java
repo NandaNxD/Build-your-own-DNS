@@ -18,7 +18,10 @@ public class Main {
          final byte[] bufResponse = new byte[512];
 
          System.arraycopy(dnsMessage.getDnsMessageHeader().getDnsOriginalMessageHeaderInBytes(), 0, bufResponse, 0, 2);
-         bufResponse[2]= (byte) 0x80;
+           /**
+            * Setting the MSB of the flags array
+            */
+         bufResponse[2]= -128;
 
          System.out.println(Arrays.toString(bufResponse));
 
