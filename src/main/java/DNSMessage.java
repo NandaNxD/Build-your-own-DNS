@@ -1,35 +1,38 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class DNSMessage {
 
     private DNSMessageHeader dnsMessageHeader;
-    private DNSMessageQuestion dnsMessageQuestion;
-    private DNSMessageAnswer dnsMessageAnswer;
-    private DNSMessageAuthority dnsMessageAuthority;
+    private DNSMessageQuestion[] dnsMessageQuestionList;
+    private DNSMessageAnswer[] dnsMessageAnswerList;
+    private DNSMessageAuthority[] dnsMessageAuthorityList;
 
     public DNSMessage(
             DNSMessageHeader dnsMessageHeader,
-            DNSMessageQuestion dnsMessageQuestion,
-            DNSMessageAnswer dnsMessageAnswer,
-            DNSMessageAuthority dnsMessageAuthority
+            DNSMessageQuestion[] dnsMessageQuestionList,
+            DNSMessageAnswer[] dnsMessageAnswerList,
+            DNSMessageAuthority[] dnsMessageAuthorityList
     ) {
         this.dnsMessageHeader = dnsMessageHeader;
-        this.dnsMessageQuestion = dnsMessageQuestion;
-        this.dnsMessageAnswer = dnsMessageAnswer;
-        this.dnsMessageAuthority = dnsMessageAuthority;
+        this.dnsMessageQuestionList = dnsMessageQuestionList;
+        this.dnsMessageAnswerList = dnsMessageAnswerList;
+        this.dnsMessageAuthorityList = dnsMessageAuthorityList;
     }
 
     public byte[] getDNSMessageInBytes() throws Exception {
         byte[] message=new byte[512];
 
         byte[] dnsMessageHeader=getDnsMessageHeader().getDNSMessageHeaderInBytes();
-        byte[] dnsMessageQuestion=getDnsMessageQuestion().getDNSMessageQuestionInBytes();
-        byte[] dnsMessageAnswer=getDnsMessageAnswer().getDNSMessageAnswerInBytes();
 
-        ArrayList<byte[]> dnsMessageItemsList=new ArrayList<>(Arrays.asList(dnsMessageHeader,dnsMessageQuestion,dnsMessageAnswer));
+        byte[] dnsMessageQuestionList= Util.mergeByteArrayListToSingleByteArray(
+                Arrays.stream(getDnsMessageQuestionList()).map(DNSMessageQuestion::getDNSMessageQuestionInBytes).toList());
+
+        byte[] dnsMessageAnswerList=Util.mergeByteArrayListToSingleByteArray(
+                Arrays.stream(getDnsMessageAnswerList()).map(DNSMessageAnswer::getDNSMessageAnswerInBytes).toList());
+
+
+        ArrayList<byte[]> dnsMessageItemsList=new ArrayList<>(Arrays.asList(dnsMessageHeader,dnsMessageQuestionList,dnsMessageAnswerList));
 
         byte[] mergedDNSMessage=Util.mergeByteArrayListToSingleByteArray(dnsMessageItemsList);
 
@@ -49,28 +52,28 @@ public class DNSMessage {
         this.dnsMessageHeader = dnsMessageHeader;
     }
 
-    public DNSMessageQuestion getDnsMessageQuestion() {
-        return dnsMessageQuestion;
+    public DNSMessageQuestion[] getDnsMessageQuestionList() {
+        return dnsMessageQuestionList;
     }
 
-    public void setDnsMessageQuestion(DNSMessageQuestion dnsMessageQuestion) {
-        this.dnsMessageQuestion = dnsMessageQuestion;
+    public void setDnsMessageQuestionList(DNSMessageQuestion[] dnsMessageQuestionList) {
+        this.dnsMessageQuestionList = dnsMessageQuestionList;
     }
 
-    public DNSMessageAnswer getDnsMessageAnswer() {
-        return dnsMessageAnswer;
+    public DNSMessageAnswer[] getDnsMessageAnswerList() {
+        return dnsMessageAnswerList;
     }
 
-    public void setDnsMessageAnswer(DNSMessageAnswer dnsMessageAnswer) {
-        this.dnsMessageAnswer = dnsMessageAnswer;
+    public void setDnsMessageAnswerList(DNSMessageAnswer[] dnsMessageAnswerList) {
+        this.dnsMessageAnswerList = dnsMessageAnswerList;
     }
 
-    public DNSMessageAuthority getDnsMessageAuthority() {
-        return dnsMessageAuthority;
+    public DNSMessageAuthority[] getDnsMessageAuthorityList() {
+        return dnsMessageAuthorityList;
     }
 
-    public void setDnsMessageAuthority(DNSMessageAuthority dnsMessageAuthority) {
-        this.dnsMessageAuthority = dnsMessageAuthority;
+    public void setDnsMessageAuthorityList(DNSMessageAuthority[] dnsMessageAuthorityList) {
+        this.dnsMessageAuthorityList = dnsMessageAuthorityList;
     }
 
     // toString()
@@ -78,9 +81,9 @@ public class DNSMessage {
     public String toString() {
         return "DNSMessage{" +
                 "dnsMessageHeader=" + dnsMessageHeader +
-                ", dnsMessageQuestion=" + dnsMessageQuestion +
-                ", dnsMessageAnswer=" + dnsMessageAnswer +
-                ", dnsMessageAuthority=" + dnsMessageAuthority +
+                ", dnsMessageQuestion=" + Arrays.toString(dnsMessageQuestionList) +
+                ", dnsMessageAnswer=" + Arrays.toString(dnsMessageAnswerList) +
+                ", dnsMessageAuthority=" + Arrays.toString(dnsMessageAuthorityList) +
                 '}';
     }
 

@@ -19,7 +19,7 @@ public class DNSMessageQuestion {
         this.domainName=domainName;
     }
 
-    public byte[] getDNSMessageQuestionInBytes() throws Exception{
+    public byte[] getDNSMessageQuestionInBytes(){
         ArrayList<byte[]> dnsMessageQuestionItemList=new ArrayList<>(Arrays.asList(name,qType,qClass));
 
         return Util.mergeByteArrayListToSingleByteArray(dnsMessageQuestionItemList);

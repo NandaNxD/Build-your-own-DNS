@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Util {
     static byte[] convertByteArrayListToByteArray(ArrayList<Byte> list) {
@@ -9,7 +10,7 @@ public class Util {
         return out;
     }
 
-    static byte[] mergeByteArrayListToSingleByteArray(ArrayList<byte[]> byteArraylist){
+    static byte[] mergeByteArrayListToSingleByteArray(List<byte[]> byteArraylist){
         int length=byteArraylist.stream().reduce(0,(sum,arr)-> sum + arr.length,Integer::sum);
 
         byte[] mergedArray=new byte[length];

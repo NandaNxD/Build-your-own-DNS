@@ -16,10 +16,23 @@ public class DNSMessageParser {
          */
         
         DNSMessageHeader dnsMessageHeader =getDNSHeader(packetData);
-        DNSMessageQuestion dnsMessageQuestion=getDNSMessageQuestion(packetData);
 
+        int numberOfQuestions=Short.toUnsignedInt(ByteBuffer.wrap(dnsMessageHeader.getQuestionCount()).getShort());
 
-        return new DNSMessage(dnsMessageHeader,dnsMessageQuestion,null,null);
+        DNSMessageQuestion[] dnsMessageQuestionList=new DNSMessageQuestion[numberOfQuestions];
+
+        int offset=12;
+
+        /**
+         * Read all the questions
+         */
+        for(int i=0;i<numberOfQuestions;i++){
+            DNSMessageQuestion dnsMessageQuestion=getDNSMessageQuestion(packetData,offset);
+            dnsMessageQuestionList[i]=dnsMessageQuestion;
+            offset+=dnsMessageQuestion.getName().length+dnsMessageQuestion.getqType().length+dnsMessageQuestion.getqClass().length;
+        }
+
+        return new DNSMessage(dnsMessageHeader,dnsMessageQuestionList,null,null);
     }
 
     static private DNSMessageHeader getDNSHeader(byte[] packetData){
@@ -68,8 +81,7 @@ public class DNSMessageParser {
         return new DNSMessageHeader(dnsOriginalMessageHeader,packetid,flags,questionCount,answerCount,authorityCount,additionalCount);
     }
 
-    private static DNSMessageQuestion getDNSMessageQuestion(byte[] packet){
-        int offset=12;
+    private static DNSMessageQuestion getDNSMessageQuestion(byte[] packet,int offset){
 
         boolean reachedEndOfName=false;
 
