@@ -20,10 +20,11 @@ public class Main {
 
 
                 //Flags:  CODE BITS -> QR 1 | OPCODE 4 | AA 1 | TC 1 | RD 1 | RA 1 | Z 3 | RCODE 4
-
+                byte valueToSetMSB=-128;
                 byte opCode= (byte) (dnsMessageHeader.getFlags()[0] & Byte.parseByte("01111000",2));
+                byte rd= (byte) (dnsMessageHeader.getFlags()[0] & 1);
 
-                byte[] flags=new byte[]{(byte)(-128 | opCode | (dnsMessageHeader.getFlags()[0] & 1)),(byte)(opCode==0?0:4)};
+                byte[] flags=new byte[]{(byte)(valueToSetMSB | opCode | rd),(byte)(opCode==0?0:4)};
 
                 dnsMessageHeader.setFlags(flags);
                 dnsMessageHeader.setQuestionCount(new byte[]{0,1});
