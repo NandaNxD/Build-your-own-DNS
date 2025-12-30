@@ -1,3 +1,5 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class DNSMessage {
@@ -7,7 +9,6 @@ public class DNSMessage {
     private DNSMessageAnswer dnsMessageAnswer;
     private DNSMessageAuthority dnsMessageAuthority;
 
-    // All-args constructor
     public DNSMessage(
             DNSMessageHeader dnsMessageHeader,
             DNSMessageQuestion dnsMessageQuestion,
@@ -20,7 +21,26 @@ public class DNSMessage {
         this.dnsMessageAuthority = dnsMessageAuthority;
     }
 
-    // Getters & Setters
+    public byte[] getDNSMessageInBytes() throws Exception {
+        byte[] message=new byte[512];
+
+        byte[] dnsMessageHeader=getDnsMessageHeader().getDNSMessageHeaderInBytes();
+        byte[] dnsMessageQuestion=getDnsMessageQuestion().getDNSMessageQuestionInBytes();
+
+        ArrayList<byte[]> dnsMessageItemsList=new ArrayList<>();
+        dnsMessageItemsList.add(dnsMessageHeader);
+        dnsMessageItemsList.add(dnsMessageQuestion);
+
+        byte[] mergedDNSMessage=Util.mergeByteArrayListToSingleByteArray(dnsMessageItemsList);
+
+        System.arraycopy(mergedDNSMessage,0,message,0,mergedDNSMessage.length);
+
+        return message;
+    }
+
+    /**
+     * Getters and setters
+     */
     public DNSMessageHeader getDnsMessageHeader() {
         return dnsMessageHeader;
     }

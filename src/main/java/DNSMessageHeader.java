@@ -1,4 +1,5 @@
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -39,7 +40,6 @@ public class DNSMessageHeader {
     private byte[] authorityCount;
     private byte[] additionalCount;
 
-    // All-args constructor
     public DNSMessageHeader(
             byte[] dnsOriginalMessageHeaderInBytes,
             byte[] packetId,
@@ -58,13 +58,34 @@ public class DNSMessageHeader {
         this.additionalCount = additionalCount;
     }
 
+    public byte[] getDNSMessageHeaderInBytes() throws Exception{
+
+        ArrayList<byte[]> dnsMessageHeaderItemList=new ArrayList<>();
+        dnsMessageHeaderItemList.add(packetId);
+        dnsMessageHeaderItemList.add(flags);
+        dnsMessageHeaderItemList.add(questionCount);
+        dnsMessageHeaderItemList.add(answerCount);
+        dnsMessageHeaderItemList.add(authorityCount);
+        dnsMessageHeaderItemList.add(additionalCount);
+
+        byte[] dnsMessageHeader=Util.mergeByteArrayListToSingleByteArray(dnsMessageHeaderItemList);
+
+        if(dnsMessageHeader.length!=12){
+            throw new Exception("DNSMessageHeader size needs be 12 bytes, it cant be:"+dnsMessageHeader.length);
+        }
+
+        return dnsMessageHeader;
+    }
+
     public int getPacketIdInInt() {
         return Short.toUnsignedInt(
                 ByteBuffer.wrap(getPacketId()).getShort()
         );
     }
 
-    // Getters & Setters
+    /**
+     * Getters and setters
+     */
     public byte[] getDnsOriginalMessageHeaderInBytes() {
         return dnsOriginalMessageHeaderInBytes;
     }

@@ -105,14 +105,7 @@ public class DNSMessageParser {
         offset+=2;
 
 
-        return new DNSMessageQuestion(Arrays.copyOfRange(packet,12,offset),convertByteArrayListToByteArray(name),qType,qClass,domainName.toString());
+        return new DNSMessageQuestion(Arrays.copyOfRange(packet,12,offset), Util.convertByteArrayListToByteArray(name),qType,qClass,domainName.toString());
     }
 
-    static byte[] convertByteArrayListToByteArray(ArrayList<Byte> list) {
-        byte[] out = new byte[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            out[i] = list.get(i);
-        }
-        return out;
-    }
 }

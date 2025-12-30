@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class DNSMessageQuestion {
     private byte[] dnsOriginalMessageQuestionInBytes;
 
@@ -9,10 +11,20 @@ public class DNSMessageQuestion {
 
     public DNSMessageQuestion(byte[] dnsOriginalMessageQuestionInBytes, byte[] name, byte[] qType, byte[] qClass,String domainName) {
         this.dnsOriginalMessageQuestionInBytes = dnsOriginalMessageQuestionInBytes;
-        this.qType = qType;
+
         this.name = name;
+        this.qType = qType;
         this.qClass = qClass;
         this.domainName=domainName;
+    }
+
+    public byte[] getDNSMessageQuestionInBytes() throws Exception{
+        ArrayList<byte[]> dnsMessageQuestionItemList=new ArrayList<>();
+        dnsMessageQuestionItemList.add(name);
+        dnsMessageQuestionItemList.add(qType);
+        dnsMessageQuestionItemList.add(qClass);
+
+        return Util.mergeByteArrayListToSingleByteArray(dnsMessageQuestionItemList);
     }
 
 
