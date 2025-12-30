@@ -1,5 +1,7 @@
 [![progress-banner](https://backend.codecrafters.io/progress/dns-server/e90b737c-6dc2-451e-a755-3988ab9378c8)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
 
+Reference: https://github.com/EmilHernvall/dnsguide/blob/b52da3b32b27c81e5c6729ac14fe01fef8b1b593/chapter1.md
+
 This is a starting point for Java solutions to the
 ["Build Your Own DNS server" Challenge](https://app.codecrafters.io/courses/dns-server/overview).
 
