@@ -30,8 +30,6 @@ public class DNSMessageHeader {
      *
      */
 
-    private byte[] dnsOriginalMessageHeaderInBytes;
-
     // Header fields (each 16 bits / 2 bytes)
     private byte[] packetId;
     private byte[] flags;
@@ -41,7 +39,6 @@ public class DNSMessageHeader {
     private byte[] additionalCount;
 
     public DNSMessageHeader(
-            byte[] dnsOriginalMessageHeaderInBytes,
             byte[] packetId,
             byte[] flags,
             byte[] questionCount,
@@ -49,7 +46,6 @@ public class DNSMessageHeader {
             byte[] authorityCount,
             byte[] additionalCount
     ) {
-        this.dnsOriginalMessageHeaderInBytes = dnsOriginalMessageHeaderInBytes;
         this.packetId = packetId;
         this.flags = flags;
         this.questionCount = questionCount;
@@ -80,13 +76,6 @@ public class DNSMessageHeader {
     /**
      * Getters and setters
      */
-    public byte[] getDnsOriginalMessageHeaderInBytes() {
-        return dnsOriginalMessageHeaderInBytes;
-    }
-
-    public void setDnsOriginalMessageHeaderInBytes(byte[] dnsOriginalMessageHeaderInBytes) {
-        this.dnsOriginalMessageHeaderInBytes = dnsOriginalMessageHeaderInBytes;
-    }
 
     public byte[] getPacketId() {
         return packetId;
@@ -141,7 +130,6 @@ public class DNSMessageHeader {
     @Override
     public String toString() {
         return "DNSMessageHeader{" +
-                "dnsOriginalMessageHeaderInBytes=" + Arrays.toString(dnsOriginalMessageHeaderInBytes) +
                 ", packetId=" + Arrays.toString(packetId) +
                 ", flags=" + Arrays.toString(flags) +
                 ", questionCount=" + Arrays.toString(questionCount) +

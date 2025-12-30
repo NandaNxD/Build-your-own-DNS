@@ -78,7 +78,7 @@ public class DNSMessageParser {
         }
 
 
-        return new DNSMessageHeader(dnsOriginalMessageHeader,packetid,flags,questionCount,answerCount,authorityCount,additionalCount);
+        return new DNSMessageHeader(packetid,flags,questionCount,answerCount,authorityCount,additionalCount);
     }
 
     private static DNSMessageQuestion getDNSMessageQuestion(byte[] packet,int offset){
@@ -89,8 +89,25 @@ public class DNSMessageParser {
 
         ArrayList<Byte> name=new ArrayList<>();
 
+        boolean compressionFlag=false;
+        byte[] uncompressedEncodedDomainName=null;
+
         while(!reachedEndOfName){
+
             byte contentLength=packet[offset++];
+
+            if((contentLength & 0b11000000)>0){
+                // TODO: Handle compression
+                /**
+                 * If first two bits of the contentLength is 11,
+                 * This represents that domain name is compressed
+                 */
+                int pointerOffset=Short.toUnsignedInt(ByteBuffer.wrap(new byte[]{(byte)(contentLength ^ 0b11000000),packet[offset]}).getShort());
+                uncompressedEncodedDomainName=getEncodedDomainNameFromPointer(packet,pointerOffset);
+                compressionFlag=true;
+                offset++;
+                break;
+            }
             name.add(contentLength);
 
             if(contentLength==0){
@@ -116,7 +133,7 @@ public class DNSMessageParser {
 
         offset+=2;
 
-        return new DNSMessageQuestion(Arrays.copyOfRange(packet,12,offset), Util.convertByteArrayListToByteArray(name),qType,qClass,domainName.toString());
+        return new DNSMessageQuestion(compressionFlag?uncompressedEncodedDomainName: Util.convertByteArrayListToByteArray(name),qType,qClass,domainName.toString());
     }
 
     public static DNSMessageAnswer getDNSMessageAnswer(DNSMessageQuestion dnsMessageQuestion){
@@ -130,6 +147,29 @@ public class DNSMessageParser {
                         new byte[]{0,0,0,0});
 
         return dnsMessageAnswer;
+    }
+
+    private static byte[] getEncodedDomainNameFromPointer(byte[] packet, int offset){
+        boolean reachedEndOfName=false;
+
+        ArrayList<Byte> name=new ArrayList<>();
+
+        while(!reachedEndOfName){
+
+            byte contentLength=packet[offset++];
+
+            name.add(contentLength);
+
+            if(contentLength==0){
+                reachedEndOfName=true;
+                continue;
+            }
+
+            while(contentLength-->0){
+                name.add(packet[offset++]);
+            }
+        }
+        return Util.convertByteArrayListToByteArray(name);
     }
 
 }

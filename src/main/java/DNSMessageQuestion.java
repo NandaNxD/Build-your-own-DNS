@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DNSMessageQuestion {
-    private byte[] dnsOriginalMessageQuestionInBytes;
 
     private byte[] name;
     private byte[] qType;
@@ -10,8 +9,7 @@ public class DNSMessageQuestion {
 
     private String domainName;
 
-    public DNSMessageQuestion(byte[] dnsOriginalMessageQuestionInBytes, byte[] name, byte[] qType, byte[] qClass,String domainName) {
-        this.dnsOriginalMessageQuestionInBytes = dnsOriginalMessageQuestionInBytes;
+    public DNSMessageQuestion( byte[] name, byte[] qType, byte[] qClass,String domainName) {
 
         this.name = name;
         this.qType = qType;
@@ -30,13 +28,6 @@ public class DNSMessageQuestion {
      * Getters and setters
      */
 
-    public byte[] getDnsOriginalMessageQuestionInBytes() {
-        return dnsOriginalMessageQuestionInBytes;
-    }
-
-    public void setDnsOriginalMessageQuestionInBytes(byte[] dnsOriginalMessageQuestionInBytes) {
-        this.dnsOriginalMessageQuestionInBytes = dnsOriginalMessageQuestionInBytes;
-    }
 
     public byte[] getName() {
         return name;
