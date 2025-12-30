@@ -104,8 +104,20 @@ public class DNSMessageParser {
 
         offset+=2;
 
-
         return new DNSMessageQuestion(Arrays.copyOfRange(packet,12,offset), Util.convertByteArrayListToByteArray(name),qType,qClass,domainName.toString());
+    }
+
+    public static DNSMessageAnswer getDNSMessageAnswer(DNSMessageQuestion dnsMessageQuestion){
+        DNSMessageAnswer dnsMessageAnswer=new
+                DNSMessageAnswer(
+                        dnsMessageQuestion.getName(),
+                        dnsMessageQuestion.getqType(),
+                        dnsMessageQuestion.getqClass(),
+                        new byte[4],
+                        new byte[]{0,4},
+                        new byte[]{0,0,0,0});
+
+        return dnsMessageAnswer;
     }
 
 }

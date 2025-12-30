@@ -60,13 +60,7 @@ public class DNSMessageHeader {
 
     public byte[] getDNSMessageHeaderInBytes() throws Exception{
 
-        ArrayList<byte[]> dnsMessageHeaderItemList=new ArrayList<>();
-        dnsMessageHeaderItemList.add(packetId);
-        dnsMessageHeaderItemList.add(flags);
-        dnsMessageHeaderItemList.add(questionCount);
-        dnsMessageHeaderItemList.add(answerCount);
-        dnsMessageHeaderItemList.add(authorityCount);
-        dnsMessageHeaderItemList.add(additionalCount);
+        ArrayList<byte[]> dnsMessageHeaderItemList=new ArrayList<>(Arrays.asList(packetId,flags,questionCount,answerCount,authorityCount,additionalCount));
 
         byte[] dnsMessageHeader=Util.mergeByteArrayListToSingleByteArray(dnsMessageHeaderItemList);
 

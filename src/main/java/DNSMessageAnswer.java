@@ -1,5 +1,7 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class DNSMessageAnswer {
-    private byte[] dnsOriginalMessageAnswerInBytes;
 
     /**
      * Its format
@@ -32,14 +34,19 @@ public class DNSMessageAnswer {
     private byte[] rDLength;
     private byte[] rData;
 
-    public DNSMessageAnswer(byte[] dnsOriginalMessageAnswerInBytes, byte[] name, byte[] qType, byte[] qClass, byte[] ttl, byte[] rDLength, byte[] rData) {
-        this.dnsOriginalMessageAnswerInBytes = dnsOriginalMessageAnswerInBytes;
+    public DNSMessageAnswer(byte[] name, byte[] qType, byte[] qClass, byte[] ttl, byte[] rDLength, byte[] rData) {
         this.name = name;
         this.qType = qType;
         this.qClass = qClass;
         this.ttl = ttl;
         this.rDLength = rDLength;
         this.rData = rData;
+    }
+
+    public byte[] getDNSMessageAnswerInBytes(){
+        ArrayList<byte[]> dnsMessageAnswerItemList=new ArrayList<>(Arrays.asList(name,qType,qClass,ttl,rDLength,rData));
+
+        return Util.mergeByteArrayListToSingleByteArray(dnsMessageAnswerItemList);
     }
 
     /**
@@ -52,14 +59,6 @@ public class DNSMessageAnswer {
 
     public void setName(byte[] name) {
         this.name = name;
-    }
-
-    public byte[] getDnsOriginalMessageAnswerInBytes() {
-        return dnsOriginalMessageAnswerInBytes;
-    }
-
-    public void setDnsOriginalMessageAnswerInBytes(byte[] dnsOriginalMessageAnswerInBytes) {
-        this.dnsOriginalMessageAnswerInBytes = dnsOriginalMessageAnswerInBytes;
     }
 
     public byte[] getqType() {

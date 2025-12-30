@@ -22,7 +22,9 @@ public class Main {
                 dnsMessageHeader.setQuestionCount(new byte[]{0,1});
                 dnsMessageHeader.setAnswerCount(new byte[]{0,1});
 
-                DNSMessage dnsResponseMessage=new DNSMessage(dnsMessageHeader,dnsMessageQuestion,null,null);
+                DNSMessageAnswer dnsMessageAnswer= DNSMessageParser.getDNSMessageAnswer(dnsMessageQuestion);
+
+                DNSMessage dnsResponseMessage=new DNSMessage(dnsMessageHeader,dnsMessageQuestion,dnsMessageAnswer,null);
 
                 final DatagramPacket packetResponse = new DatagramPacket(dnsResponseMessage.getDNSMessageInBytes(),512, packet.getSocketAddress());
                 serverSocket.send(packetResponse);

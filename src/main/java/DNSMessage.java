@@ -1,5 +1,6 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class DNSMessage {
@@ -26,10 +27,9 @@ public class DNSMessage {
 
         byte[] dnsMessageHeader=getDnsMessageHeader().getDNSMessageHeaderInBytes();
         byte[] dnsMessageQuestion=getDnsMessageQuestion().getDNSMessageQuestionInBytes();
+        byte[] dnsMessageAnswer=getDnsMessageAnswer().getDNSMessageAnswerInBytes();
 
-        ArrayList<byte[]> dnsMessageItemsList=new ArrayList<>();
-        dnsMessageItemsList.add(dnsMessageHeader);
-        dnsMessageItemsList.add(dnsMessageQuestion);
+        ArrayList<byte[]> dnsMessageItemsList=new ArrayList<>(Arrays.asList(dnsMessageHeader,dnsMessageQuestion,dnsMessageAnswer));
 
         byte[] mergedDNSMessage=Util.mergeByteArrayListToSingleByteArray(dnsMessageItemsList);
 
