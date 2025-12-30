@@ -20,7 +20,7 @@ public class DNSMessage {
         this.dnsMessageAuthorityList = dnsMessageAuthorityList;
     }
 
-    public byte[] getDNSMessageInBytes() throws Exception {
+    public byte[] getDNSMessageInBytes(boolean excludeAnswerList) throws Exception {
         byte[] message=new byte[512];
 
         byte[] dnsMessageHeader=getDnsMessageHeader().getDNSMessageHeaderInBytes();
@@ -28,11 +28,19 @@ public class DNSMessage {
         byte[] dnsMessageQuestionList= Util.mergeByteArrayListToSingleByteArray(
                 Arrays.stream(getDnsMessageQuestionList()).map(DNSMessageQuestion::getDNSMessageQuestionInBytes).toList());
 
-        byte[] dnsMessageAnswerList=Util.mergeByteArrayListToSingleByteArray(
-                Arrays.stream(getDnsMessageAnswerList()).map(DNSMessageAnswer::getDNSMessageAnswerInBytes).toList());
+        byte[] dnsMessageAnswerList=null;
+
+        if(!excludeAnswerList){
+            dnsMessageAnswerList=Util.mergeByteArrayListToSingleByteArray(
+                    Arrays.stream(getDnsMessageAnswerList()).map(DNSMessageAnswer::getDNSMessageAnswerInBytes).toList());
+        }
 
 
-        ArrayList<byte[]> dnsMessageItemsList=new ArrayList<>(Arrays.asList(dnsMessageHeader,dnsMessageQuestionList,dnsMessageAnswerList));
+        ArrayList<byte[]> dnsMessageItemsList=new ArrayList<>(Arrays.asList(dnsMessageHeader,dnsMessageQuestionList));
+
+        if(!excludeAnswerList){
+            dnsMessageItemsList.add(dnsMessageAnswerList);
+        }
 
         byte[] mergedDNSMessage=Util.mergeByteArrayListToSingleByteArray(dnsMessageItemsList);
 

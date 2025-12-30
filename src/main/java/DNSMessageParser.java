@@ -136,7 +136,76 @@ public class DNSMessageParser {
         return new DNSMessageQuestion(compressionFlag?uncompressedEncodedDomainName: Util.convertByteArrayListToByteArray(name),qType,qClass,domainName.toString());
     }
 
-    public static DNSMessageAnswer getDNSMessageAnswer(DNSMessageQuestion dnsMessageQuestion){
+    public static DNSMessageAnswer parseDNSMessageAnswer(byte[] packet,int offset){
+
+        boolean reachedEndOfName=false;
+
+        StringBuilder domainName=new StringBuilder();
+
+        ArrayList<Byte> name=new ArrayList<>();
+
+        boolean compressionFlag=false;
+        byte[] uncompressedEncodedDomainName=null;
+
+        while(!reachedEndOfName){
+
+            byte contentLength=packet[offset++];
+
+            if((contentLength & 0b11000000)>0){
+                // TODO: Handle compression
+                /**
+                 * If first two bits of the contentLength is 11,
+                 * This represents that domain name is compressed
+                 */
+                int pointerOffset=Short.toUnsignedInt(ByteBuffer.wrap(new byte[]{(byte)(contentLength ^ 0b11000000),packet[offset]}).getShort());
+                uncompressedEncodedDomainName=getEncodedDomainNameFromPointer(packet,pointerOffset);
+                compressionFlag=true;
+                offset++;
+                break;
+            }
+            name.add(contentLength);
+
+            if(contentLength==0){
+                //domainName.deleteCharAt(domainName.length()-1);
+                reachedEndOfName=true;
+                continue;
+            }
+
+            while(contentLength-->0){
+                domainName.append((char)packet[offset]);
+                name.add(packet[offset++]);
+            }
+            domainName.append('.');
+        }
+
+        byte[] qType=new byte[2];
+
+        System.arraycopy(packet,offset,qType,0,2);
+        offset+=2;
+
+        byte[] qClass=new byte[2];
+        System.arraycopy(packet,offset,qClass,0,2);
+
+        offset+=2;
+
+        byte[] ttl=new byte[4];
+        System.arraycopy(packet,offset,ttl,0,4);
+
+        offset+=4;
+
+        byte[] rDLength=new byte[2];
+        System.arraycopy(packet,offset,rDLength,0,2);
+
+        offset+=2;
+
+        byte[] rData=new byte[4];
+        System.arraycopy(packet,offset,rData,0,4);
+
+        return new DNSMessageAnswer(compressionFlag?uncompressedEncodedDomainName: Util.convertByteArrayListToByteArray(name),qType,qClass,ttl,rDLength,rData);
+    }
+
+    public static DNSMessageAnswer getDNSMessageAnswerLocally(DNSMessageQuestion dnsMessageQuestion){
+
         DNSMessageAnswer dnsMessageAnswer=new
                 DNSMessageAnswer(
                         dnsMessageQuestion.getName(),
