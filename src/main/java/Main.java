@@ -20,7 +20,18 @@ public class Main {
             forwardingDNSServerMode=true;
         }
 
-        try (DatagramSocket serverSocket = new DatagramSocket(2053)) {
+        /**
+         * This is used for forwarding to resolving server
+         */
+        DatagramSocket upstreamSocket = null;
+        InetSocketAddress resolvingServerAddress = null;
+
+        if(forwardingDNSServerMode){
+            resolvingServerAddress=new InetSocketAddress(ipAddress,port);
+            upstreamSocket=new DatagramSocket();
+            upstreamSocket.connect(resolvingServerAddress);
+        }
+        try (DatagramSocket serverSocket = new DatagramSocket(2053);) {
             while (true) {
                 final byte[] buf = new byte[512];
                 final DatagramPacket packet = new DatagramPacket(buf, buf.length);
@@ -76,13 +87,13 @@ public class Main {
                          */
                         dnsMessageHeader.setPacketId(new byte[]{(byte)(i+1),0});
 
-                        final DatagramPacket packetResponse = new DatagramPacket(dnsResponseMessage.getDNSMessageInBytes(true),512, new InetSocketAddress(ipAddress,port));
-                        serverSocket.send(packetResponse);
+                        final DatagramPacket packetResponse = new DatagramPacket(dnsResponseMessage.getDNSMessageInBytes(true),512, resolvingServerAddress);
+                        upstreamSocket.send(packetResponse);
 
                         byte[] forwardedServerResponsePacketData=new byte[512];
 
                         DatagramPacket responsePacket = new DatagramPacket(forwardedServerResponsePacketData, forwardedServerResponsePacketData.length);
-                        serverSocket.receive(responsePacket);
+                        upstreamSocket.receive(responsePacket);
 
                         int messageAnswerOffset=12+dnsResponseMessage.getDnsMessageQuestionList()[0].getDNSMessageQuestionInBytes().length;
 
