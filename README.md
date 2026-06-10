@@ -2,6 +2,8 @@
 
 Reference: https://github.com/EmilHernvall/dnsguide/blob/b52da3b32b27c81e5c6729ac14fe01fef8b1b593/chapter1.md
 
+# Testing => dig @127.0.0.1 -p 2053 +noedns google.com
+
 This is a starting point for Java solutions to the
 ["Build Your Own DNS server" Challenge](https://app.codecrafters.io/courses/dns-server/overview).
 
